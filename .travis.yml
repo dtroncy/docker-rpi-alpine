@@ -7,8 +7,17 @@ env:
 script:
 # prepare qemu
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+# get qemu-arm-static binary
+  - mkdir tmp
+  - >
+    pushd tmp &&
+    curl -L -o qemu-arm-static.tar.gz https://github.com/multiarch/qemu-user-static/releases/download/v2.12.0-1/qemu-arm-static.tar.gz &&
+    tar xzf qemu-arm-static.tar.gz &&
+    popd
 # build image
   - docker build --build-arg alpine_version=$alpine_version -t dtroncy/rpi-alpine .
+# test image
+- docker run dtroncy/rpi-alpine:$alpine_version uname -a
 # push image
   - >
     if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
