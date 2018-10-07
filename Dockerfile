@@ -1,3 +1,5 @@
+ARG alpine_version
+
 FROM arm32v6/alpine:$alpine_version
 
 # Get qemu to build on non-arm platform
