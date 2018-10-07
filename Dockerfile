@@ -2,9 +2,11 @@ ARG alpine_version
 
 FROM arm32v6/alpine:$alpine_version
 
-# Get qemu to build on non-arm platform
-RUN mkdir -p /usr/bin/qemu-arm-static
+LABEL maintainer="dtroncy"
 
-RUN cd /usr/bin/qemu-arm-static
+RUN apk update && apk upgrade
 
-RUN curl -L -o qemu-arm-static https://github.com/multiarch/qemu-user-static/releases/download/v2.12.0-1/qemu-arm-static
+RUN apk add --no-cache wget
+
+# Get qemu to build on non-arm platform (like travis)
+RUN wget -P /usr/bin --no-check-certificate  https://github.com/multiarch/qemu-user-static/releases/download/v2.12.0-1/qemu-arm-static
