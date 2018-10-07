@@ -17,7 +17,7 @@ script:
 # build image
   - docker build --build-arg alpine_version=$alpine_version -t dtroncy/rpi-alpine .
 # test image
-- docker run dtroncy/rpi-alpine:$alpine_version uname -a
+  - docker run dtroncy/rpi-alpine:$alpine_version uname -a
 # push image
   - >
     if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
