@@ -3,7 +3,7 @@ services:
   - docker
 language: bash
 env:
-  - alpine_version=3.7
+  - alpine_version=3.8
 script:
 # prepare qemu
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
