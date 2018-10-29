@@ -16,6 +16,6 @@ To run it (with image on docker hub) :
 
 Description of parameters :
   - **-t** : Allocate a pseudo-tty
-  - **-i** : keep STDIN open even if not attached
-  - **--name alpine** : container's name
-  - **dtroncy/rpi-alpine** : image's name
+  - **-i** : Keep STDIN open even if not attached
+  - **--name alpine** : Container's name
+  - **dtroncy/rpi-alpine** : Image's name
