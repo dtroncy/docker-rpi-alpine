@@ -4,7 +4,13 @@ services:
 language: bash
 env:
   - alpine_version=3.9
+addons:
+  apt:
+    packages:
+      - docker-ce
 script:
+# activate experimental docker feature
+  - export DOCKER_CLI_EXPERIMENTAL=enabled
 # prepare qemu
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
 # get qemu-arm-static binary
@@ -26,3 +32,10 @@ script:
       docker push dtroncy/rpi-alpine:$alpine_version
       docker push dtroncy/rpi-alpine
     fi
+# Create and update image manifest
+  - docker manifest create dtroncy/rpi-alpine:latest dtroncy/rpi-alpine:latest
+  - docker manifest annotate dtroncy/rpi-alpine:latest dtroncy/rpi-alpine:latest --arch arm
+  - docker manifest push dtroncy/rpi-alpine:latest
+  - docker manifest create dtroncy/rpi-alpine:$alpine_version dtroncy/rpi-alpine:$alpine_version
+  - docker manifest annotate dtroncy/rpi-alpine:$alpine_version dtroncy/rpi-alpine:$alpine_version --arch arm
+  - docker manifest push dtroncy/rpi-alpine:$alpine_version
