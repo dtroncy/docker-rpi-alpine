@@ -24,8 +24,6 @@ script:
   - docker buildx create --name builder
   - docker buildx use builder
   - docker buildx inspect --bootstrap
-# build image
-  - docker build --build-arg alpine_version=$alpine_version -t dtroncy/rpi-alpine .
 # if master branch, build image and push it
   - >
     if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
