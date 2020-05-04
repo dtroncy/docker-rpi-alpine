@@ -1,7 +1,7 @@
 sudo: required
 language: bash
 env:
-  - alpine_version=3.9
+  - alpine_version=3.11.6
 before_install:
   - sudo apt-get remove docker docker-engine docker.io containerd runc
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
