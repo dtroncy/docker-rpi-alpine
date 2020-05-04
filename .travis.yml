@@ -1,12 +1,18 @@
 sudo: required
-services:
-  - docker
 language: bash
 env:
   - alpine_version=3.11.6
+before_install:
+  - sudo apt-get remove docker docker-engine docker.io containerd runc
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 script:
+# activate experimental docker feature
+  - export DOCKER_CLI_EXPERIMENTAL=enabled
 # prepare qemu
-  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker run --rm --privileged docker/binfmt:66f9012c56a8316f9244ffd7622d7c21c1f6f28d
 # get qemu-arm-static binary
   - mkdir tmp
   - >
@@ -14,15 +20,20 @@ script:
     curl -L -o qemu-arm-static.tar.gz https://github.com/multiarch/qemu-user-static/releases/download/v4.1.0-1/qemu-arm-static.tar.gz &&
     tar xzf qemu-arm-static.tar.gz &&
     popd
-# build image
-  - docker build --build-arg alpine_version=$alpine_version -t dtroncy/rpi-alpine .
-# test image
-  - docker run dtroncy/rpi-alpine uname -a
-# push image
+# create new builder
+  - docker buildx create --name builder
+  - docker buildx use builder
+  - docker buildx inspect --bootstrap
+# if master branch, build image and push it
   - >
     if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
       docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
-      docker tag dtroncy/rpi-alpine dtroncy/rpi-alpine:$alpine_version
-      docker push dtroncy/rpi-alpine:$alpine_version
-      docker push dtroncy/rpi-alpine
+      docker buildx build --platform linux/amd64,linux/arm/v6 --build-arg alpine_version=$alpine_version -t  dtroncy/rpi-alpine:latest --push .
+      docker buildx build --platform linux/amd64,linux/arm/v6 --build-arg alpine_version=$alpine_version -t  dtroncy/rpi-alpine:$alpine_version --push .
+    fi
+# if develop branch, build image and load it
+  - >
+    if [ "$TRAVIS_BRANCH" == "develop" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+      docker buildx build --platform linux/amd64,linux/arm/v6 --build-arg alpine_version=$alpine_version -t  dtroncy/rpi-alpine:latest --load .
+      docker buildx build --platform linux/amd64,linux/arm/v6 --build-arg alpine_version=$alpine_version -t  dtroncy/rpi-alpine:$alpine_version --load .
     fi
