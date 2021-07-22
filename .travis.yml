@@ -1,7 +1,7 @@
 sudo: required
 language: bash
 env:
-  - alpine_version=3.12.0
+  - alpine_version=3.14.0
 before_install:
   - sudo apt-get remove docker docker-engine docker.io containerd runc
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -17,7 +17,7 @@ script:
   - mkdir tmp
   - >
     pushd tmp &&
-    curl -L -o qemu-arm-static.tar.gz https://github.com/multiarch/qemu-user-static/releases/download/v5.1.0-2/qemu-arm-static.tar.gz &&
+    curl -L -o qemu-arm-static.tar.gz https://github.com/multiarch/qemu-user-static/releases/download/v6.0.0-1/x86_64_qemu-arm-static.tar.gz &&
     tar xzf qemu-arm-static.tar.gz &&
     popd
 # create new builder
