@@ -1,7 +1,7 @@
 sudo: required
 language: bash
 env:
-  - alpine_version=3.14.0
+  - alpine_version=3.14.2
 before_install:
   - sudo apt-get remove docker docker-engine docker.io containerd runc
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -12,12 +12,12 @@ script:
 # activate experimental docker feature
   - export DOCKER_CLI_EXPERIMENTAL=enabled
 # prepare qemu
-  - docker run --rm --privileged docker/binfmt:66f9012c56a8316f9244ffd7622d7c21c1f6f28d
+  - docker run --privileged --rm tonistiigi/binfmt --install all
 # get qemu-arm-static binary
   - mkdir tmp
   - >
     pushd tmp &&
-    curl -L -o qemu-arm-static.tar.gz https://github.com/multiarch/qemu-user-static/releases/download/v6.0.0-1/x86_64_qemu-arm-static.tar.gz &&
+    curl -L -o qemu-arm-static.tar.gz https://github.com/multiarch/qemu-user-static/releases/download/v6.1.0-6/x86_64_qemu-arm-static.tar.gz &&
     tar xzf qemu-arm-static.tar.gz &&
     popd
 # create new builder
